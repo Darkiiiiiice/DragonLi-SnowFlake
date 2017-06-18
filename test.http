@@ -1,7 +1,7 @@
 POST http://localhost:9090/primary/apply HTTP/1.1
-content-type: application/json
+content-type: application/
 
 {
     "reqtype":123,
-    "businessid":12367623
+    "workid":12367623
 }
