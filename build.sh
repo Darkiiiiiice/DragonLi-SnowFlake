@@ -14,6 +14,7 @@ go get github.com/bmizerany/pq
 go get github.com/julienschmidt/httprouter
 go install github/mariomang/catrouter
 go install io/mariomang/github
+go install pingtest
 echo 'go success'
 if [ -f "$execute" ]; then 
      ./bin/github
