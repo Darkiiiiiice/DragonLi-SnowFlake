@@ -1,13 +1,14 @@
 package service
 
 import (
-	"fmt"
-	"io/mariomang/github/dao"
+	"encoding/json"
 	"io/mariomang/github/domain"
+	"io/mariomang/github/snowflake"
 )
 
 func GenrateIDService(request *domain.RequestDomain) string {
-	maxID, step := dao.GetMaxIDAndStepByWorkID("AAAABBBBCCCCDDDDEEEEFFFF")
-	fmt.Println(maxID, step)
-	return "HelloWorld"
+	sf := snowflake.NewSnowFlake(request.WorkID, request.MachineID)
+	id := sf.GetID()
+	response, _ := json.Marshal(domain.NewSuccessResponse("Success", request.WorkID, id))
+	return string(response)
 }

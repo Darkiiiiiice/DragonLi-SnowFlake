@@ -15,20 +15,20 @@ import (
 func GenrateIDController(w http.ResponseWriter, r *http.Request, p *catrouter.Params) {
 
 	if c := r.Header.Get("Content-Type"); c != "application/json" {
-		response := domain.NewErrorResponse(consts.ErrContentType, "ContentType error", "")
+		fmt.Println("Content-Type error")
+		response := domain.NewErrorResponse(consts.ErrContentType, "ContentType error")
 		w.Write(response.JsonBytes())
 		return
 	}
 
 	jsonBytes := getJsonDataString(r)
-	fmt.Println(string(jsonBytes))
 
 	request := &domain.RequestDomain{}
 	json.Unmarshal(jsonBytes, &request)
+
 	fmt.Println(request)
 
 	response := service.GenrateIDService(request)
-
 	w.Write([]byte(response))
 }
 

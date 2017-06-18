@@ -6,7 +6,8 @@ import "encoding/json"
 type ResponseDomain struct {
 	ErrorCode uint8  `json:"errorcode"`
 	ErrorMsg  string `json:"errormsg"`
-	Data      string `json:"data"`
+	WorkID    int64  `json:"workid"`
+	GlobalID  int64  `json:"globalid"`
 }
 
 func NewResponseDomain() ResponseDomain {
@@ -16,27 +17,26 @@ func NewResponseDomain() ResponseDomain {
 	}
 }
 
-func NewSuccessResponse(msg string, data string) ResponseDomain {
+func NewSuccessResponse(msg string, workid int64, globalid int64) ResponseDomain {
 	return ResponseDomain{
 		ErrorCode: consts.Success,
 		ErrorMsg:  msg,
-		Data:      data,
+		WorkID:    workid,
+		GlobalID:  globalid,
 	}
 }
 
-func NewFailedResponse(msg string, data string) ResponseDomain {
+func NewFailedResponse(msg string) ResponseDomain {
 	return ResponseDomain{
 		ErrorCode: consts.Failure,
 		ErrorMsg:  msg,
-		Data:      data,
 	}
 }
 
-func NewErrorResponse(code uint8, msg string, data string) ResponseDomain {
+func NewErrorResponse(code uint8, msg string) ResponseDomain {
 	return ResponseDomain{
 		ErrorCode: code,
 		ErrorMsg:  msg,
-		Data:      data,
 	}
 }
 
