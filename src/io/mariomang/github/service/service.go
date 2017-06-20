@@ -13,7 +13,7 @@ func GenrateIDService(request *domain.RequestDomain) string {
 	id := sf.GetID()
 	response, err := json.Marshal(domain.NewSuccessResponse("Success", request.WorkID, id))
 	if err != nil {
-		emsg := fmt.Sprintf(consts.JsonMarshalErrorMsg, err)
+		emsg := fmt.Sprintf(consts.JSONMarshalErrorMsg, err)
 		fmt.Println(emsg)
 		return emsg
 	}

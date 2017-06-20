@@ -11,6 +11,7 @@ import (
 	"net/http"
 )
 
+// GenrateIDController genrate snowflake id controller
 func GenrateIDController(w http.ResponseWriter, r *http.Request, p *catrouter.Params) {
 
 	if c := r.Header.Get("Content-Type"); c != consts.ContentType {
@@ -33,9 +34,9 @@ func GenrateIDController(w http.ResponseWriter, r *http.Request, p *catrouter.Pa
 	request := new(domain.RequestDomain)
 	err = json.Unmarshal(jsonBytes, &request)
 	if err != nil {
-		emsg := fmt.Sprintf(consts.JsonUnmarshalErrorMsg, err)
+		emsg := fmt.Sprintf(consts.JSONUnmarshalErrorMsg, err)
 		fmt.Println(emsg)
-		response := domain.NewErrorResponse(consts.JsonUnmarshalErrorCode, emsg)
+		response := domain.NewErrorResponse(consts.JSONUnmarshalErrorCode, emsg)
 		w.Write(response.JsonBytes())
 		return
 	}

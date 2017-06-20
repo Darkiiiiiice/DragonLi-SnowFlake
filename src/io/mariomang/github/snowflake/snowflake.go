@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// SnowFlake structure
 type SnowFlake struct {
 	baseTimeStamp int64
 	workIDBits    int64
@@ -23,6 +24,7 @@ type SnowFlake struct {
 	lock          sync.Mutex
 }
 
+// SnowFlakePool used of store SnowFlake struct
 type SnowFlakePool struct {
 	snowFlakes map[int64]*SnowFlake
 }
@@ -34,7 +36,10 @@ func init() {
 	pool.snowFlakes = make(map[int64]*SnowFlake)
 }
 
-func NewSnowFlake(workID int64, machineId int64) *SnowFlake {
+// NewSnowFlake make a new SnowFlake pointer
+// workID workid
+// machineId machineID
+func NewSnowFlake(workID int64, machineID int64) *SnowFlake {
 
 	if s, ok := pool.snowFlakes[workID]; ok {
 		return s
@@ -46,13 +51,13 @@ func NewSnowFlake(workID int64, machineId int64) *SnowFlake {
 		sequenceBits:  consts.SequenceBits,
 		lastTimeStamp: -1,
 		WorkID:        workID,
-		MachineID:     machineId,
+		MachineID:     machineID,
 	}
 	snowflake.maxWorkID = -1 ^ (-1 << uint(snowflake.workIDBits))
 	snowflake.maxMachineID = -1 ^ (-1 << uint(snowflake.machineIdbits))
 	snowflake.maxSequence = -1 ^ (-1 << uint(snowflake.sequenceBits))
 
-	if workID > snowflake.maxWorkID || machineId > snowflake.maxMachineID {
+	if workID > snowflake.maxWorkID || machineID > snowflake.maxMachineID {
 		return nil
 	}
 
@@ -61,6 +66,7 @@ func NewSnowFlake(workID int64, machineId int64) *SnowFlake {
 	return snowflake
 }
 
+// GetID genrate snowflake id thread safty
 func (s *SnowFlake) GetID() int64 {
 	s.lock.Lock()
 	s.TimeStamp = time.Now().Unix()
