@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github/mariomang/catrouter"
@@ -14,28 +13,33 @@ import (
 
 func GenrateIDController(w http.ResponseWriter, r *http.Request, p *catrouter.Params) {
 
-	if c := r.Header.Get("Content-Type"); c != "application/json" {
-		fmt.Println("Content-Type error")
-		response := domain.NewErrorResponse(consts.ErrContentType, "ContentType error")
+	if c := r.Header.Get("Content-Type"); c != consts.ContentType {
+		emsg := fmt.Sprintf(consts.ContentTypeErrorMsg, c)
+		fmt.Println(emsg)
+		response := domain.NewErrorResponse(consts.ContentTypeErrorCode, emsg)
 		w.Write(response.JsonBytes())
 		return
 	}
 
-	jsonBytes := getJsonDataString(r)
+	jsonBytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		emsg := fmt.Sprintf(consts.PostDataErrorMsg, err)
+		fmt.Println(emsg)
+		response := domain.NewErrorResponse(consts.PostDataErrorCode, emsg)
+		w.Write(response.JsonBytes())
+		return
+	}
 
-	request := &domain.RequestDomain{}
-	json.Unmarshal(jsonBytes, &request)
-
-	fmt.Println(request)
+	request := new(domain.RequestDomain)
+	err = json.Unmarshal(jsonBytes, &request)
+	if err != nil {
+		emsg := fmt.Sprintf(consts.JsonUnmarshalErrorMsg, err)
+		fmt.Println(emsg)
+		response := domain.NewErrorResponse(consts.JsonUnmarshalErrorCode, emsg)
+		w.Write(response.JsonBytes())
+		return
+	}
 
 	response := service.GenrateIDService(request)
 	w.Write([]byte(response))
-}
-
-func getJsonDataString(r *http.Request) []byte {
-	result, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return nil
-	}
-	return bytes.NewBuffer(result).Bytes()
 }

@@ -86,7 +86,7 @@ func (s *SnowFlake) GetID() int64 {
 
 	id := timestamp + workdID + machineID + s.Sequence
 	s.lock.Unlock()
-	fmt.Printf("timestamp: %d workId: %d machineId: %d SequenceID: %d ID: %b\n ", s.TimeStamp, s.WorkID, s.MachineID, s.Sequence, id)
+	fmt.Printf("timestamp: %d workId: %d machineId: %d SequenceID: %d ID: %064b\n ", s.TimeStamp, s.WorkID, s.MachineID, s.Sequence, id)
 	return id
 }
 
