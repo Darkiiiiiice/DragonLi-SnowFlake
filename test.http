@@ -1,0 +1,12 @@
+POST http://localhost:8085/primary/apply HTTP/1.1
+content-type: application/json
+
+{
+    "reqtype":123,
+    "workid":1,
+    "machineid":2
+}
+
+
+                  1101111111111101000000110000010000100000000000
+0000000000000000001101111111111101101110000000010000100000000000
