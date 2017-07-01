@@ -14,7 +14,7 @@ type PgSql struct {
 func GetPgSql() *PgSql {
 	var pg *PgSql
 	if pg == nil {
-		globalDB, err := sql.Open("postgres", "user=postgres password=none853275286 dbname=dragonli host=123.206.44.24 sslmode=disable")
+		globalDB, err := sql.Open("postgres", "")
 		if err != nil {
 			fmt.Println(err.Error())
 		}
