@@ -1,3 +1,6 @@
 *.a
 pkg/*
 bin/*
+*.exe
+
+.DS_Store
