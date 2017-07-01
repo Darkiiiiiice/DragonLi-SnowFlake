@@ -66,7 +66,7 @@ func NewSnowFlake(workID int64, machineID int64) *SnowFlake {
 	return snowflake
 }
 
-// GetID genrate snowflake id thread safty
+// GetID generate snowflake id thread safty
 func (s *SnowFlake) GetID() int64 {
 	s.lock.Lock()
 	s.TimeStamp = time.Now().UnixNano() / 1e6
