@@ -69,7 +69,7 @@ func NewSnowFlake(workID int64, machineID int64) *SnowFlake {
 // GetID genrate snowflake id thread safty
 func (s *SnowFlake) GetID() int64 {
 	s.lock.Lock()
-	s.TimeStamp = time.Now().Unix()
+	s.TimeStamp = time.Now().UnixNano() / 1e6
 	if s.TimeStamp < s.lastTimeStamp {
 		fmt.Println("Clock moved backwards.")
 		return -1
@@ -77,10 +77,12 @@ func (s *SnowFlake) GetID() int64 {
 
 	if s.TimeStamp == s.lastTimeStamp {
 		s.Sequence++
-		if s.Sequence > s.maxSequence {
-			s.TimeStamp = gotoNextMills(s.lastTimeStamp)
-		}
 	} else {
+		s.Sequence = 0
+	}
+
+	if s.Sequence > s.maxSequence {
+		s.TimeStamp = gotoNextMills(s.lastTimeStamp)
 		s.Sequence = 0
 	}
 

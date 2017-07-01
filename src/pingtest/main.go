@@ -1,52 +1,71 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
+	"io/mariomang/github/dao"
+	"io/mariomang/github/snowflake"
+	"runtime"
+	"sync"
 	"time"
 )
 
 func main() {
+	fmt.Println("BenchMark")
 
-	var i int = 0
-	ch := make(chan string)
-	for i < 1000 {
-		time.Sleep(time.Duration(time.Nanosecond * 1000000))
-		go ping(ch)
-		i++
-	}
+	var waitGroup sync.WaitGroup
 
+	snow := snowflake.NewSnowFlake(1, 1)
+	ch := make(chan int64, 1024)
+
+	waitGroup.Add(1)
+	go savehandle(&waitGroup, ch)
+
+	s := time.Now().UnixNano() / 1e6
 	for {
-		fmt.Println(<-ch)
+
+		e := time.Now().UnixNano() / 1e6
+
+		if e-s >= 1 {
+			// ch <- -3
+			// fmt.Println("=================================")
+			break
+		}
+
+		waitGroup.Add(1)
+		go idhandle(&waitGroup, snow, ch)
 	}
 
-	fmt.Println("post send success")
+	waitGroup.Wait()
 }
 
-func ping(ch chan string) {
-	//这里添加post的body内容
-	data := make(map[string]string)
-	data["workid"] = "1"
-	data["machine"] = "2"
+func idhandle(wg *sync.WaitGroup, snow *snowflake.SnowFlake, ch chan int64) {
+	defer wg.Done()
 
-	str, _ := json.Marshal(data)
+	id := snow.GetID()
+	// fmt.Printf("Tag-%d    ID:%d\n", tag, id)
+	ch <- id
 
-	resp, err := http.Post("http://localhost:9090/primary/apply",
-		"application/json",
-		strings.NewReader(string(str)))
-	if err != nil {
-		fmt.Println(err)
+}
+
+func savehandle(wg *sync.WaitGroup, ch chan int64) {
+	defer wg.Done()
+
+	for {
+		select {
+		case id := <-ch:
+			fmt.Println(wg)
+			fmt.Printf("goroutine-%d   Saved-%d\n", runtime.NumGoroutine(), id)
+			dao.InsertByWorkID(id, "TEST")
+		}
+
+		// if id == -3 {
+		// 	fmt.Println("Os.Exited()")
+		// 	break
+		// }
+
+		// select {
+		// case id := <-ch:
+		// 	fmt.Printf("IDD:%d\n", id)
+		// }
 	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		// handle error
-	}
-	ch <- string(body)
-
-	fmt.Println(string(body))
 }
